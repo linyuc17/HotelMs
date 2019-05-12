@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.mju.band2.dao.UserDao">
+    <select id="selectUserById" parameterType="Integer" resultMap="resultMap">
+        SELECT * FROM user WHERE user_id= #{id}
+    </select>
+    <select id="selectUserList" resultMap="resultMap">
+        SELECT * FROM user
+    </select>
+    <select id="selectUserListByCondition" parameterType="cn.edu.mju.band2.po.User"
+            resultMap="resultMap">
+        SELECT * FROM user
+        <include refid="selectUserListWhere"/>
+        <if test="start != null and rows != null">
+            LIMIT #{start},#{rows}
+        </if>
+    </select>
+    <select id="selectUserListCount" parameterType="cn.edu.mju.band2.po.User"
+            resultType="Integer">
+        SELECT COUNT(*) FROM user
+        <include refid="selectUserListWhere"/>
+    </select>
+    <insert id="addUser">
+        INSERT INTO user(user_id, user_password, user_name, identity_number, user_phone, user_gender, user_photo, user_status)
+        VALUES (#{userId}, #{userPassword}, #{userName}, #{identityNumber}, #{userPhone}, #{userGender}, #{userPhoto}, #{userStatus})
+    </insert>
+    <delete id="deleteUser">
+        DELETE FROM user WHERE user_id IN (
+        <foreach item="id" collection="array" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    <update id="updateUser" parameterType="cn.edu.mju.band2.po.User">
+        UPDATE user
+        <set>
+            <if test="userPassword != null">
+                user_password = #{userPassword},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+            <if test="identityNumber != null">
+                identity_number = #{identityNumber},
+            </if>
+            <if test="userPhone != null">
+                user_phone = #{userPhone},
+            </if>
+            <if test="userGender != null">
+                user_gender = #{userGender},
+            </if>
+            <if test="userPhoto != null">
+                user_photo = #{userPhoto},
+            </if>
+            <if test="userStatus != null">
+                user_status = #{userStatus},
+            </if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+    <sql id="selectUserListWhere">
+        <where>
+            <if test="userId != null">
+                user_id LIKE concat("%",#{userId},"%")
+            </if>
+            <if test="userPassword != null">
+                AND user_password LIKE concat("%",#{userPassword},"%")
+            </if>
+            <if test="userName != null">
+                AND user_name LIKE concat("%",#{userName},"%")
+            </if>
+            <if test="identityNumber != null">
+                AND identity_number LIKE concat("%",#{identityNumber},"%")
+            </if>
+            <if test="userPhone != null">
+                AND user_phone LIKE concat("%",#{userPhone},"%")
+            </if>
+            <if test="userGender != null">
+                AND user_gender LIKE concat("%",#{userGender},"%")
+            </if>
+            <if test="userPhoto != null">
+                AND user_photo LIKE concat("%",#{userPhoto},"%")
+            </if>
+            <if test="userStatus != null">
+                AND user_status LIKE concat("%",#{userStatus},"%")
+            </if>
+        </where>
+
+    </sql>
+    <resultMap id="resultMap" type="cn.edu.mju.band2.po.User">
+        <id property="userId" column="user_id"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="userName" column="user_name"/>
+        <result property="identityNumber" column="identity_number"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="userGender" column="user_gender"/>
+        <result property="userPhoto" column="user_photo"/>
+        <result property="userStatus" column="user_status"/>
+    </resultMap>
+</mapper>

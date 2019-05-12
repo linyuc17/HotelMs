@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.mju.band2.dao.AdminDao">
+
+    <select id="findByName" resultType="cn.edu.mju.band2.po.Admin" parameterType="string">
+        SELECT * FROM administrator WHERE admin_name =#{admin_name}
+    </select>
+    <select id="findAll" resultType="cn.edu.mju.band2.po.Admin">
+        SELECT * FROM administrator
+    </select>
+    <select id="findById" parameterType="integer" resultType="cn.edu.mju.band2.po.Admin">
+        SELECT * FROM administrator WHERE admin_id = #{admin_id}
+    </select>
+    <insert id="insert" parameterType="cn.edu.mju.band2.po.Admin">
+        INSERT INTO administrator(admin_password, admin_name,
+                                  identity_number, admin_phone, admin_gender, admin_photo,admin_email)
+        VALUES (#{admin_password},#{admin_name},#{identity_number},#{admin_phone},#{admin_gender},#{admin_photo},#{admin_email})
+    </insert>
+    <update id="update" parameterType="cn.edu.mju.band2.po.Admin">
+        UPDATE administrator SET admin_name=#{admin_name},admin_photo=#{admin_photo},
+                                 admin_phone=#{admin_phone},admin_password=#{admin_password},admin_gender=#{admin_gender},
+                                 identity_number=#{identity_number},admin_email=#{admin_email} WHERE admin_id=#{admin_id}
+    </update>
+    <delete id="delete" parameterType="integer">
+        DELETE FROM administrator WHERE admin_id = #{admin_id}
+    </delete>
+    <!--批量删除-->
+    <delete id="BatchDelete" parameterType="integer">
+        DELETE FROM administrator WHERE admin_id IN
+        <foreach collection="array" open="(" close=")" separator="," item="admin_id" index="no">
+            #{admin_id}
+        </foreach>
+    </delete>
+    <select id="findByDim" parameterType="string" resultType="cn.edu.mju.band2.po.Admin">
+        SELECT * from administrator WHERE admin_name LIKE concat("%",#{admin_name},"%")
+    </select>
+</mapper>

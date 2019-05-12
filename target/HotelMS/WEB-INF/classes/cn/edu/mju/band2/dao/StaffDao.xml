@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.mju.band2.dao.StaffDao">
+
+    <insert id="insert" parameterType="cn.edu.mju.band2.po.Staff">
+        INSERT INTO staff( staff_name, identity_number, staff_phone, staff_gender, staff_photo)
+        VALUES (#{staff_name},#{identity_number},#{staff_phone},#{staff_gender},#{staff_photo})
+    </insert>
+
+    <delete id="BatchDelete" parameterType="List">
+        DELETE FROM staff WHERE staff_id IN
+        <foreach collection="array" open="(" close=")" separator="," item="staff_id">
+            #{staff_id}
+        </foreach>
+    </delete>
+    <delete id="delete" parameterType="integer">
+        DELETE FROM staff WHERE staff_id=#{staff_id}
+    </delete>
+    <update id="update" parameterType="cn.edu.mju.band2.po.Staff">
+        UPDATE staff SET staff_name=#{staff_name},staff_phone=#{staff_photo},
+                         staff_gender=#{staff_gender},staff_photo=#{staff_photo}
+        WHERE staff_id=#{staff_id}
+    </update>
+    <select id="findAll" resultType="cn.edu.mju.band2.po.Staff">
+        SELECT * FROM staff
+    </select>
+    <select id="findByName" parameterType="string" resultType="cn.edu.mju.band2.po.Staff">
+        SELECT * FROM staff WHERE staff_name=#{staff_name}
+    </select>
+    <select id="findById" parameterType="integer" resultType="cn.edu.mju.band2.po.Staff">
+        SELECT * FROM staff WHERE staff_id=#{staff_id}
+    </select>
+    <select id="selectStaffListCount" parameterType="cn.edu.mju.band2.po.Staff" resultType="integer">
+        SELECT COUNT(*) FROM staff
+        <include refid="selectStaffListWhere"></include>
+    </select>
+
+    <select id="staffCount" resultType="integer">
+        SELECT COUNT(*) FROM staff
+    </select>
+
+    <select id="findsByDim" parameterType="string" resultType="cn.edu.mju.band2.po.Admin">
+        SELECT * from staff WHERE staff_name LIKE concat("%",#{staff_name},"%")
+    </select>
+
+    <sql id="selectStaffListWhere">
+        <where>
+            <if test="staff_id!= null">
+                staff_id LIKE concat("%",#{staff_id},"%")
+            </if>
+            <if test="staff_password != null">
+                AND staff_password LIKE concat("%",#{staff_password},"%")
+            </if>
+            <if test="staff_name != null">
+                AND staff_name LIKE concat("%",#{staff_name},"%")
+            </if>
+            <if test="identity_number != null">
+                AND identity_number LIKE concat("%",#{identity_number},"%")
+            </if>
+            <if test="staff_phone != null">
+                AND staff_phone LIKE concat("%",#{staff_phone},"%")
+            </if>
+            <if test="staff_gender != null">
+                AND staff_gender LIKE concat("%",#{staff_gender},"%")
+            </if>
+            <if test="staff_photo != null">
+                AND staff_photo LIKE concat("%",#{staff_photo},"%")
+            </if>
+            <if test="staff_status != null">
+                AND staff_status LIKE concat("%",#{staff_status},"%")
+            </if>
+        </where>
+    </sql>
+</mapper>

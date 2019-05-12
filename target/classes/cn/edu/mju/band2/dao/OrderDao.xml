@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.mju.band2.dao.OrderDao">
+    <select id="selectOrderById" parameterType="Integer" resultMap="resultMap">
+        SELECT * FROM `order` WHERE order_id = #{id}
+    </select>
+    <select id="selectOrderList" resultMap="resultMap">
+        SELECT * FROM `order`
+    </select>
+    <select id="selectOrderListByCondition" parameterType="cn.edu.mju.band2.po.Order"
+            resultMap="resultMap">
+        SELECT * FROM `order`
+        <include refid="selectOrderListWhere"/>
+        <if test="start != null and rows != null">
+            LIMIT #{start},#{rows}
+        </if>
+    </select>
+    <select id="selectOrderListCount" parameterType="cn.edu.mju.band2.po.Order"
+            resultType="Integer">
+        SELECT COUNT(*) FROM `order`
+        <include refid="selectOrderListWhere"/>
+    </select>
+    <insert id="addOrder">
+        INSERT INTO `order`(order_id, user_id, order_date, room_id, room_type, admin_id, order_status)
+        VALUES (#{orderId}, #{userId}, #{orderDate}, #{roomId}, #{roomType}, #{adminId}, #{orderStatus})
+    </insert>
+    <delete id="deleteOrder">
+        DELETE FROM `order` WHERE order_id IN (
+        <foreach item="id" collection="array" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    <update id="updateOrder" parameterType="cn.edu.mju.band2.po.Order">
+        UPDATE `order`
+        <set>
+            <if test="userId != null">
+                user_id =  #{userId},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId},
+            </if>
+            <if test="adminId != null">
+                admin_id = #{adminId},
+            </if>
+            <if test="roomType != null">
+                room_type = #{roomType},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus},
+            </if>
+            <if test="orderDate != null">
+                order_date = #{orderDate},
+            </if>
+        </set>
+        WHERE order_id = #{orderId}
+    </update>
+    <sql id="selectOrderListWhere">
+        <where>
+            <if test="orderId != null">
+                order_id LIKE concat("%",#{orderId},"%")
+            </if>
+            <if test="userId != null">
+                AND user_id LIKE concat("%",#{userId},"%")
+            </if>
+            <if test="roomId != null">
+                AND room_id LIKE concat("%",#{roomId},"%")
+            </if>
+            <if test="adminId != null">
+                AND admin_id LIKE concat("%",#{adminId},"%")
+            </if>
+            <if test="roomType != null">
+                AND room_type LIKE concat("%",#{roomType},"%")
+            </if>
+            <if test="orderStatus != null">
+                AND order_status LIKE concat("%",#{orderStatus},"%")
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND order_date BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+    </sql>
+    <resultMap id="resultMap" type="cn.edu.mju.band2.po.Order">
+        <id property="orderId" column="order_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="roomId" column="room_id"/>
+        <result property="adminId" column="admin_id"/>
+        <result property="roomType" column="room_type"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="orderDate" column="order_date"/>
+    </resultMap>
+</mapper>
